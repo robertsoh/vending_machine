@@ -1,0 +1,46 @@
+*.pyc
+*.db
+bin/*
+include/*
+lib/*
+logs/*
+media/*
+.vagrant/*
+.*.swp
+.idea/*
+.env*
+.DS_Store
+static/admin/*
+static/django_extensions/*
+config/settings/local.py
+config/settings/gunicorn.conf.py
+static/debug_toolbar/*
+static/celery/*
+static/djcelery/*
+static/*
+*.jasper
+Vagrantfile
+deploy/
+logs/*
+.python-version
+*.pid
+# SonarQube
+.scannerwork/*
+
+#visual code
+.vscode/
+
+#env
+env/
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+### Django ###
+*.log
+*.pot
+*.pyc
+db.sqlite*
+# static/

@@ -1,0 +1,12 @@
+[
+  {
+    "model": "common.featureflag",
+    "pk": 1,
+    "fields": {
+      "name": "Niubiz simulation",
+      "name_key": "niubiz_simulation",
+      "is_active": true,
+      "description": "When true, use simulated Niubiz flow for testing."
+    }
+  }
+]
