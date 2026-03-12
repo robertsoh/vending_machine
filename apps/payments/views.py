@@ -59,7 +59,6 @@ class CreateOrderView(View):
         return JsonResponse(payload)
 
 
-
 @method_decorator(csrf_exempt, name="dispatch")
 @method_decorator(require_POST, name="dispatch")
 class NiubizWebhookView(View):

@@ -1,7 +1,6 @@
 import json
 import logging
 
-from django.db import transaction
 from django.http import HttpRequest, JsonResponse
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -16,57 +15,16 @@ logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name="dispatch")
 class PollView(View):
-    def post(self, request, *args, **kwargs) -> JsonResponse:
-        return JsonResponse(
-            {
-                "Status": "0",
-                "MsgType": "0",
-                "TradeNo": 1,
-                "SlotNo": 1,
-                "ProductID": 1,
-                "Err": "Success",
-            }
-        )
-        """ 
+    def post(self, request: HttpRequest) -> JsonResponse:
+        logger.info("poll request.POST=%s", request.POST.dict())
+        logger.info("poll raw body=%s", request.body.decode("utf-8", errors="replace"))
         try:
             payload = json.loads(request.body.decode("utf-8"))
+            logger.info("poll payload=%s", payload)
         except (json.JSONDecodeError, UnicodeDecodeError):
-            return JsonResponse({"Status": "1", "Err": "Invalid JSON"}, status=400)
+            logger.info("poll payload=invalid json")
 
-        logger.info(f"payload: {payload}")
-
-        if payload.get("FunCode") != "4000":
-            return JsonResponse({"Status": "1", "Err": "Invalid FunCode"}, status=400)
-
-        machine_id = payload.get("MachineID")
-        if not machine_id:
-            return JsonResponse({"Status": "1", "Err": "MachineID required"}, status=400)
-
-        with transaction.atomic():
-            order = (
-                Order.objects.select_for_update()
-                .filter(machine_id=machine_id, status=Order.Status.PAID)
-                .order_by("created_at")
-                .first()
-            )
-
-            if not order:
-                return JsonResponse({"Status": "1", "Err": "No paid order"})
-
-            order.status = Order.Status.DISPENSING
-            order.save(update_fields=["status", "updated_at"])
-
-        return JsonResponse(
-            {
-                "Status": "0",
-                "MsgType": "0",
-                "TradeNo": order.trade_no,
-                "SlotNo": order.slot_number,
-                "ProductID": order.product_id,
-                "Err": "Success",
-            }
-        )
-        """
+        return JsonResponse({"Status": "0", "SlotNo": 1, "TradeNo": 1, "Err": "Success"})
 
 
 @method_decorator(csrf_exempt, name="dispatch")
