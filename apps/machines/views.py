@@ -18,13 +18,34 @@ class PollView(View):
     def post(self, request: HttpRequest) -> JsonResponse:
         logger.info("poll request.POST=%s", request.POST.dict())
         logger.info("poll raw body=%s", request.body.decode("utf-8", errors="replace"))
-        try:
-            payload = json.loads(request.body.decode("utf-8"))
-            logger.info("poll payload=%s", payload)
-        except (json.JSONDecodeError, UnicodeDecodeError):
-            logger.info("poll payload=invalid json")
+        data = request.POST.dict()
+        """
+        poll request.POST={'FunCode': '1000', 'MachineID': '2001160092', 'TradeNo': '20260312184942145',
+         'SlotNo': '58', 'Status': '0', 'Quantity': '15', 'Stock': '15', 'Capacity': '15', 'ProductID': '1', 
+         'Name': 'Vending machine', 'Price': '1.0', 'SPrice': '6553.5', 'Type': '', 'Introduction': '', 
+         'ModifyType': '5', 'LockGoodsCount': '0'}
 
-        return JsonResponse({"Status": "0", "SlotNo": 1, "TradeNo": 1, "Err": "Success"})
+        """
+        func_code = data["FunCode"]
+        machine_id = data["MachineID"]
+        if func_code == "1000":
+            trade_number = data["TradeNo"]
+            return JsonResponse({"Status": "0", "SlotNo": 1, "TradeNo": trade_number, "Err": "Success"})
+
+        elif func_code == '4000':
+            return JsonResponse({
+                "Status": "0",
+                "MsgType": "0",
+                "TradeNo": '1',
+                "SlotNo": '1',
+                "ProductID": '1',
+                "Err": "Succeeded"
+            })
+        elif func_code == '5000':
+            trade_number = data["TradeNo"]
+            return JsonResponse({"Status": "0", "SlotNo": 1, "TradeNo": trade_number, "Err": "Success"})
+
+        return JsonResponse({})
 
 
 @method_decorator(csrf_exempt, name="dispatch")

@@ -49,8 +49,8 @@ class CreateOrderView(View):
         payload = {
             "Status": "0",
             "Err": "success",
-            "OrderID": 1,
-            "TradeNo": 1,
+            "OrderID": '1',
+            "TradeNo": '1',
             "MachineID": mid,
             "SlotNo": sid,
             "ProductID": pid,
