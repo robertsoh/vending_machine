@@ -16,10 +16,16 @@ logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name="dispatch")
 class PollView(View):
-    def post(self, request, *args, **kwargs) -> JsonResponse:
+    def post(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
         logger.info("poll request.POST=%s", request.POST.dict())
         logger.info("poll raw body=%s", request.body.decode("utf-8", errors="replace"))
-        data = json.loads(request.body)
+        if request.POST:
+            data = request.POST.dict()
+        else:
+            try:
+                data = json.loads(request.body.decode("utf-8"))
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                return JsonResponse({"Status": "1", "Err": "Invalid payload"}, status=400)
         """
         poll request.POST={'FunCode': '1000', 'MachineID': '2001160092', 'TradeNo': '20260312184942145',
          'SlotNo': '58', 'Status': '0', 'Quantity': '15', 'Stock': '15', 'Capacity': '15', 'ProductID': '1', 
@@ -27,8 +33,10 @@ class PollView(View):
          'ModifyType': '5', 'LockGoodsCount': '0'}
 
         """
-        func_code = data["FunCode"]
-        machine_id = data["MachineID"]
+        func_code = data.get("FunCode")
+        machine_id = data.get("MachineID")
+        if not func_code or not machine_id:
+            return JsonResponse({"Status": "1", "Err": "FunCode and MachineID required"}, status=400)
         if func_code == "1000":
             trade_number = data["TradeNo"]
             slot_nro = data["SlotNo"]
