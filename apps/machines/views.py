@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name="dispatch")
 class PollView(View):
-    def post(self, request: HttpRequest) -> JsonResponse:
+    def post(self, request, *args, **kwargs) -> JsonResponse:
         logger.info("poll request.POST=%s", request.POST.dict())
         logger.info("poll raw body=%s", request.body.decode("utf-8", errors="replace"))
-        data = request.POST.dict()
+        data = json.loads(request.body)
         """
         poll request.POST={'FunCode': '1000', 'MachineID': '2001160092', 'TradeNo': '20260312184942145',
          'SlotNo': '58', 'Status': '0', 'Quantity': '15', 'Stock': '15', 'Capacity': '15', 'ProductID': '1', 

@@ -22,9 +22,6 @@ class Producto(models.Model):
 
     class Meta:
         ordering = ["machine_id", "slot_no"]
-        constraints = [
-            models.UniqueConstraint(fields=["machine_id", "slot_no"], name="uniq_producto_machine_slot"),
-        ]
 
     def __str__(self) -> str:
         return f"Producto {self.machine_id} slot {self.slot_no} product {self.product_id}"
