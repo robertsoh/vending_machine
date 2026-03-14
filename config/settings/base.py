@@ -24,6 +24,7 @@ LOCAL_APPS = [
     "apps.machines",
     "apps.payments",
     "apps.orders",
+    "apps.producto",
 ]
 
 THIRD_PARTY_APPS = []

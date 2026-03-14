@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from apps.orders.models import Order
+from apps.producto.models import Producto
 
 
 logger = logging.getLogger(__name__)
@@ -30,17 +31,44 @@ class PollView(View):
         machine_id = data["MachineID"]
         if func_code == "1000":
             trade_number = data["TradeNo"]
-            return JsonResponse({"Status": "0", "SlotNo": 1, "TradeNo": trade_number, "Err": "Success"})
+            slot_nro = data["SlotNo"]
+
+            Producto.objects.update_or_create(
+                machine_id=machine_id,
+                slot_no=slot_nro,
+                defaults={
+                    "trade_no": trade_number,
+                    "status": int(data["Status"]),
+                    "quantity": int(data["Quantity"]),
+                    "stock": int(data["Stock"]),
+                    "capacity": int(data["Capacity"]),
+                    "product_id": data["ProductID"],
+                    "name": data["Name"],
+                    "price": data["Price"],
+                    "s_price": data["SPrice"],
+                    "product_type": data.get("Type", ""),
+                    "introduction": data.get("Introduction", ""),
+                    "modify_type": data.get("ModifyType", ""),
+                    "lock_goods_count": int(data.get("LockGoodsCount", 0)),
+                },
+            )
+            return JsonResponse({"Status": "0", "SlotNo": slot_nro, "TradeNo": trade_number, "Err": "Success"})
 
         elif func_code == '4000':
-            return JsonResponse({
-                "Status": "0",
-                "MsgType": "0",
-                "TradeNo": '1',
-                "SlotNo": '1',
-                "ProductID": '1',
-                "Err": "Succeeded"
-            })
+            producto = Producto.objects.order_by("-id").first()
+            if not producto:
+                return JsonResponse({"Status": "1", "Err": "No product found"})
+
+            return JsonResponse(
+                {
+                    "Status": "0",
+                    "MsgType": "0",
+                    "TradeNo": producto.trade_no,
+                    "SlotNo": producto.slot_no,
+                    "ProductID": producto.product_id,
+                    "Err": "Succeeded",
+                }
+            )
         elif func_code == '5000':
             trade_number = data["TradeNo"]
             return JsonResponse({"Status": "0", "SlotNo": 1, "TradeNo": trade_number, "Err": "Success"})
