@@ -84,7 +84,7 @@ class PollView(View):
 
         elif func_code == "4000":
             order = Order.objects.filter(
-                machine_id=machine_id, status=Order.Status.PROCCESSING
+                machine_id=machine_id, status=Order.Status.PENDING
             ).first()
             if not order:
                 return JsonResponse({"Status": "1", "Err": "No product found"})
@@ -108,9 +108,10 @@ class PollView(View):
             try:
                 order = Order.objects.get(
                     machine_id=machine_id,
-                    trade_no=trade_number,
+                    #trade_no=trade_number,
                     slot_number=slot_no,
                     product_id=product_id,
+                    status=Order.Status.PAID
                 )
                 if status in ["0", "2"]:
                     order.status = Order.Status.COMPLETED
