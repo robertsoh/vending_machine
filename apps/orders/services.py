@@ -27,7 +27,6 @@ def create_pending_order(*, mid, sid, pid, pri_raw):
         try:
             return Order.objects.create(
                 machine_id=mid,
-                trade_no=generate_trade_no(),
                 slot_number=sid,
                 product_id=pid,
                 amount=amount,

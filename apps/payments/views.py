@@ -12,48 +12,37 @@ from apps.orders.models import Order
 from apps.orders.services import OrderCreationError, create_pending_order
 
 
-
 logger = logging.getLogger(__name__)
 
 
 class CreateOrderView(View):
     def get(self, request, *args, **kwargs) -> HttpResponse:
         logger.info("create-order query params: %s", request.GET.dict())
-        mid = request.GET.get("mid"),
-        sid = request.GET.get("sid"),
-        pid = request.GET.get("pid"),
+        machine_id = request.GET.get("mid")
+        slot_no = request.GET.get("sid")
+        product_id = request.GET.get("pid")
         pri_raw = request.GET.get("pri")
-        """
         try:
             order = create_pending_order(
-                mid=request.GET.get("mid"),
-                sid=request.GET.get("sid"),
-                pid=request.GET.get("pid"),
+                mid=machine_id,
+                sid=slot_no,
+                pid=product_id,
                 pri_raw=request.GET.get("pri"),
             )
         except OrderCreationError as exc:
-            return JsonResponse({"error": exc.message}, status=400)
-        
-        payment_url = build_payment_url(order)
+            return JsonResponse(
+                {
+                    "Status": "1",
+                }
+            )
         payload = {
             "Status": "0",
             "Err": "success",
             "OrderID": order.id,
             "TradeNo": order.trade_no,
-            "MachineID": order.machine_id,
-            "SlotNo": order.slot_number,
-            "ProductID": order.product_id,
-            "Amount": f"{order.amount:.2f}",
-        }
-        """
-        payload = {
-            "Status": "0",
-            "Err": "success",
-            "OrderID": '1',
-            "TradeNo": '1',
-            "MachineID": mid,
-            "SlotNo": sid,
-            "ProductID": pid,
+            "MachineID": machine_id,
+            "SlotNo": slot_no,
+            "ProductID": product_id,
             "Amount": 20,
         }
         return JsonResponse(payload)
