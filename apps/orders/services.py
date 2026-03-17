@@ -27,6 +27,7 @@ def create_pending_order(*, mid, sid, pid, pri_raw):
         try:
             return Order.objects.create(
                 machine_id=mid,
+                trade_no=generate_trade_no(),
                 slot_number=sid,
                 product_id=pid,
                 amount=amount,
@@ -40,4 +41,4 @@ def create_pending_order(*, mid, sid, pid, pri_raw):
 
 def generate_trade_no() -> str:
     # Compact, sortable serial compatible with machine protocol examples.
-    return timezone.now().strftime("%Y%m%d%H%M%S%f")
+    return timezone.now().strftime("%Y%m%d%H%M%S%f")[:10]

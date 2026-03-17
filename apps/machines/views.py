@@ -108,7 +108,7 @@ class PollView(View):
             try:
                 order = Order.objects.get(
                     machine_id=machine_id,
-                    #trade_no=trade_number,
+                    trade_no=trade_number,
                     slot_number=slot_no,
                     product_id=product_id,
                     status=Order.Status.PAID
