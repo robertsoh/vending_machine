@@ -1,3 +1,4 @@
+import time
 from decimal import Decimal, InvalidOperation
 
 from django.db import IntegrityError
@@ -41,4 +42,4 @@ def create_pending_order(*, mid, sid, pid, pri_raw):
 
 def generate_trade_no() -> str:
     # Compact, sortable serial compatible with machine protocol examples.
-    return timezone.now().strftime("%Y%m%d%H%M%S%f")[:10]
+    return str(int(time.time() * 1000))[-17:]
